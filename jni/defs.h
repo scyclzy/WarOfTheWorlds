@@ -37,6 +37,11 @@
 #define CRAFTED_STACK_OFFSET (0x2000)
 
 /**
+ * The virtual address of the pppolac_proto_ops.
+ */
+#define PPPOLAC_PROTO_OPS_ADDRESS (0xC11709E0)
+
+/**
  * The offset of the "release" funcptr in pppolac_proto_ops.
  */
 #define PPPOLAC_RELEASE_OFFSET (2*sizeof(uint32_t))

