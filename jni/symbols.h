@@ -13,11 +13,17 @@
 
 /**
  * The start address of the secure app region (on shamu)
+ * when the device boots up, theres a message printed to dmesg along the lines
+ * of "secure apps region..." which contains the address and
+ * size of the region.
  */
 #define SECURE_APP_REGION_START (0xD600000)
 
 /**
  * The size of the secure app region
+ * when the device boots up, theres a message printed to dmesg along the lines
+ * of "secure apps region..." which contains the address and
+ * size of the region.
  */
 #define SECURE_APP_REGION_SIZE (0x500000)
 
